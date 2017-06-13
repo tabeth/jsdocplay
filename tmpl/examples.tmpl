@@ -2,13 +2,12 @@
     var data = obj;
     var self = this;
 
-    // This is a terrible, terrible way to do this, but it will do for now
     data.forEach(function(example, index) {
         if (example.caption) {
     ?>
         <p class="code-caption"><?js= example.caption ?></p>
     <?js } ?>
-    <pre class="javascript-example prettyprint"><code><?js= self.htmlsafe(example.code) ?></code></pre>
+    <pre class="prettyprint <?js= example.executable ? 'executable-example' : ''?>"><code><?js= self.htmlsafe(example.code) ?></code></pre>
 <?js
     });
 ?>

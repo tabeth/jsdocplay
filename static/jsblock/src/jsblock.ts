@@ -1,9 +1,9 @@
 // the semi-colon before function invocation is a safety net against concatenated
 // scripts and/or other plugins which may not be closed properly.
-;(function ( $, window, document, undefined ) {
-    // undefined is used here as the undefined global variable in ECMAScript 3 is
-    // mutable (ie. it can be changed by someone else). undefined isn't really being
-    // passed in so we can ensure the value of it is truly undefined. In ES5, undefined
+;(function ( $, window, document) {
+    // null is used here as the null global variable in ECMAScript 3 is
+    // mutable (ie. it can be changed by someone else). null isn't really being
+    // passed in so we can ensure the value of it is truly null. In ES5, null
     // can no longer be modified.
 
     // window and document are passed through as local variable rather than global
@@ -11,13 +11,13 @@
     // minified (especially when both are regularly referenced in your plugin).
 
     // Create the defaults once
-    var pluginName = "codeblock",
+    var pluginName = "jsblock",
         defaults = {
           editable: true,
           consoleText: "Output from the example appears here",
-		  consoleClass: "codeblock-console-text",
+		  consoleClass: "jsblock-console-text",
           runButtonText: "run",
-          runButtonClass: "codeblock-console-run",
+          runButtonClass: "jsblock-console-run",
           console: true,
           resetable: true,
           runnable: true,
@@ -26,7 +26,7 @@
         };
 
     // The actual plugin constructor
-    function CodeBlock( element, options ) {
+    function JsBlock( element, options ) {
         this.element = element;
         this.original = $(this.element);
 		this.enabled = true;
@@ -52,7 +52,7 @@
         this.init();
     }
 
-    CodeBlock.prototype = {
+    JsBlock.prototype = {
         init: function() {
           this.setUpDom();
           this.setUpEditor();
@@ -68,8 +68,8 @@
         setUpDom: function() {
             //the ACE editor directly manipulates the classes, etc. of the
             //element it latches on to, so we set up an encapsulating DOM structure
-            this.el = $('<div></div>').addClass("codeblock-container");
-            var inner = $('<div></div>').addClass("codeblock-editor-wrapper");
+            this.el = $('<div></div>').addClass("jsblock-container");
+            var inner = $('<div></div>').addClass("jsblock-editor-wrapper");
 
 			this.base = this.original.clone();
 
@@ -81,7 +81,7 @@
 
             //Strip whitespace to make writing html easier
             this.base.html($.trim(this.base.html()));
-            this.base.addClass("codeblock-editor");
+            this.base.addClass("jsblock-editor");
 
 			this.originalText = this.base.text();
 
@@ -94,7 +94,7 @@
         setUpEditor: function() {
             //Set up ace editor - requires an ID to latch on to
             if (!this.base.attr("id")) {
-                this.base.attr("id", "codeblock-editor-"+(+new Date));
+                this.base.attr("id", "jsblock-editor-"+(+new Date));
             }
 
             this.editor = ace.edit(this.base.attr("id"));
@@ -116,19 +116,19 @@
             }]);
 
             this.editor.setReadOnly(!this.options.editable);
-			this.editor.renderer.setShowGutter(this.options.lineNumbers); 
+			this.editor.renderer.setShowGutter(this.options.lineNumbers);
         },
 
         createConsole: function() {
-            var console_wrapper = $('<div></div>').addClass("codeblock-console");
-            this.console  = $("<span></span>").addClass("codeblock-console-text");
+            var console_wrapper = $('<div></div>').addClass("jsblock-console");
+            this.console  = $("<span></span>").addClass("jsblock-console-text");
             console_wrapper.append(this.console);
             this.console.text(this.options.consoleText);
             this.console.addClass("placeholder");
             this.console.width(this.el.width() - 70);
 
 			if (this.options.runnable) {
-				this.runButton = $("<span></span>").addClass("codeblock-console-run");
+				this.runButton = $("<span></span>").addClass("jsblock-console-run");
 				this.runButton.text(this.options.runButtonText);
 
 				var cur = this;
@@ -144,7 +144,7 @@
         },
 
         createResetButton: function() {
-            var reset_button = $("<i></i>").addClass("codeblock-reset").attr("title", "Reset");
+            var reset_button = $("<i></i>").addClass("jsblock-reset").attr("title", "Reset");
 
             var cur = this;
             reset_button.click(function() {
@@ -156,24 +156,24 @@
 
 		destroy: function() {
 			this.editor.destroy();
-			this.editor = undefined;
-			this.options = undefined;
-			this.originalText = undefined;
-			this.console = undefined;
-			this.runButton = undefined;
+			this.editor = null;
+			this.options = null;
+			this.originalText = null;
+			this.console = null;
+			this.runButton = null;
 
 			this.original.insertBefore(this.el);
 			$.removeData(this.element, "plugin_" + pluginName);
 			this.base.removeData("plugin_" + pluginName);
 
 			this.base.remove();
-			this.base = undefined;
+			this.base = null;
 			this.el.remove();
-			this.el = undefined;
+			this.el = null;
 		},
 
         run: function() {
-		    this.base.add(this.original).trigger("codeblock.run");
+		    this.base.add(this.original).trigger("jsblock.run");
 
             var val = this.editor.getValue();
             //clear text
@@ -188,7 +188,7 @@
                     var currText = cur.console.html();
                     currText += text + "<br/>";
                     cur.console.html(currText);
-					cur.base.add(cur.original).trigger("codeblock.console", [text]);
+					cur.base.add(cur.original).trigger("jsblock.console", [text]);
                 };
                 try {
                     //To catch returns & exceptions
@@ -206,7 +206,7 @@
         },
 
         reset: function() {
-          this.base.add(this.original).trigger("codeblock.reset");
+          this.base.add(this.original).trigger("jsblock.reset");
 
           this.editor.setValue(this.originalText);
           this.editor.clearSelection();
@@ -218,7 +218,7 @@
         },
 
 		getSetText: function(newText) {
-		  if (newText !== undefined) {
+		  if (newText !== null) {
 			  this.editor.setValue(newText);
 			  return this;
 		  } else {
@@ -231,7 +231,7 @@
 		},
 
 		getSetEditable: function(param){
-		  if (param !== undefined) {
+		  if (param !== null) {
 			  this.editor.setReadOnly(!param);
 			  return this;
 		  } else {
@@ -240,7 +240,7 @@
 		},
 
 		getSetRunnable: function(param){
-		  if (param !== undefined) {
+		  if (param !== null) {
 			  this.enabled = param;
 			  this.runButton.toggleClass("disabled", !param);
 			  return this;
@@ -258,28 +258,28 @@
 			//constructor
 			var options = arguments[0];
             return this.each(function(){
-                var codeblock = $.data(this, "plugin_" + pluginName);
-				if (!codeblock) {
-                    codeblock = new CodeBlock( this, options );
-					$.data(this, "plugin_" + pluginName, codeblock);
+                var jsblock = $.data(this, "plugin_" + pluginName);
+				if (!jsblock) {
+                    jsblock = new JsBlock( this, options );
+					$.data(this, "plugin_" + pluginName, jsblock);
 				}
 			});
 		} else {
-			//action (i.e. $(".blah").codeblock('run');
+			//action (i.e. $(".blah").jsblock('run');
 			var action = arguments[0];
 			var params = Array.prototype.slice.call(arguments, 1);
             var ret = this.map(function(){
-				var codeblock = $.data(this, "plugin_" + pluginName);
-				if (codeblock) {
-					var method = codeblock._exports[action];
+				var jsblock = $.data(this, "plugin_" + pluginName);
+				if (jsblock) {
+					var method = jsblock._exports[action];
 					if (!method) { throw "Codeblock has no method "+action;}
-					return method.apply(codeblock, params);
+					return method.apply(jsblock, params);
 				}
 			}).get();
 
             //return "this" for everything but the getters
             if (action === "editor" || (params.length ===0 && (action == "runnable" || action == "editable"))) {
-                return ret.length >= 1 ? ret[0] : undefined;
+                return ret.length >= 1 ? ret[0] : null;
             } else if (params.length === 0 && action == "text") {
                 return ret.join();
             } else {

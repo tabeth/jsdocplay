@@ -1,9 +1,9 @@
 // the semi-colon before function invocation is a safety net against concatenated
 // scripts and/or other plugins which may not be closed properly.
-;(function ( $, window, document, undefined ) {
-    // undefined is used here as the undefined global variable in ECMAScript 3 is
-    // mutable (ie. it can be changed by someone else). undefined isn't really being
-    // passed in so we can ensure the value of it is truly undefined. In ES5, undefined
+;(function ( $, window, document) {
+    // null is used here as the null global variable in ECMAScript 3 is
+    // mutable (ie. it can be changed by someone else). null isn't really being
+    // passed in so we can ensure the value of it is truly null. In ES5, null
     // can no longer be modified.
 
     // window and document are passed through as local variable rather than global
@@ -156,20 +156,20 @@
 
 		destroy: function() {
 			this.editor.destroy();
-			this.editor = undefined;
-			this.options = undefined;
-			this.originalText = undefined;
-			this.console = undefined;
-			this.runButton = undefined;
+			this.editor = null;
+			this.options = null;
+			this.originalText = null;
+			this.console = null;
+			this.runButton = null;
 
 			this.original.insertBefore(this.el);
 			$.removeData(this.element, "plugin_" + pluginName);
 			this.base.removeData("plugin_" + pluginName);
 
 			this.base.remove();
-			this.base = undefined;
+			this.base = null;
 			this.el.remove();
-			this.el = undefined;
+			this.el = null;
 		},
 
         run: function() {
@@ -218,7 +218,7 @@
         },
 
 		getSetText: function(newText) {
-		  if (newText !== undefined) {
+		  if (newText !== null) {
 			  this.editor.setValue(newText);
 			  return this;
 		  } else {
@@ -231,7 +231,7 @@
 		},
 
 		getSetEditable: function(param){
-		  if (param !== undefined) {
+		  if (param !== null) {
 			  this.editor.setReadOnly(!param);
 			  return this;
 		  } else {
@@ -240,7 +240,7 @@
 		},
 
 		getSetRunnable: function(param){
-		  if (param !== undefined) {
+		  if (param !== null) {
 			  this.enabled = param;
 			  this.runButton.toggleClass("disabled", !param);
 			  return this;
@@ -279,7 +279,7 @@
 
             //return "this" for everything but the getters
             if (action === "editor" || (params.length ===0 && (action == "runnable" || action == "editable"))) {
-                return ret.length >= 1 ? ret[0] : undefined;
+                return ret.length >= 1 ? ret[0] : null;
             } else if (params.length === 0 && action == "text") {
                 return ret.join();
             } else {
