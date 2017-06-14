@@ -453,6 +453,7 @@ exports.publish = function(taffyData, opts, tutorials) {
                 }
 
                 code = code || example;
+                /* Specifically mark executable examples */
                 if (code.match(/@executable\n/)) {
                   code = code.replace(/@executable\n/, '');
                   executable = true;
